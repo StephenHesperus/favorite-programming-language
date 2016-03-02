@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block page_content %}
+<h1>Sorry, I don't know your favorite language. You can add it here so I can learn it .</h1>
+
+<h2>Add Your Favorite Language</h2>
+<form method="POST">
+  {{ form.hidden_tag() }}
+  <p>{{ form.language.label }} {{ form.language }}</p>
+  <p>{{ form.question.label }} {{ form.question }}</p>
+  <p>{{ form.answer }}</p>
+  <p>{{ form.submit }}</p>
+</form>
+
+<p>Or, you can <a href="{{ url_for('index') }}">start the game again.</a></p>
+{% endblock page_content %}
+
+<!--
+vim: filetype=htmljinja syntax=htmldjango
+-->

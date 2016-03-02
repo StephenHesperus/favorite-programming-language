@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block page_content %}
+<form method="POST">
+  {{ form.hidden_tag() }}
+  <h1>{{ question }}</h1>
+  {{ form.answer }}
+  {{ form.submit }}
+</form>
+{% endblock page_content %}
+
+<!--
+vim: filetype=htmljinja syntax=htmldjango
+-->
