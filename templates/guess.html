@@ -1,7 +1,16 @@
 {% extends "base.html" %}
 
 {% block page_content %}
-<p>Your favorite programming language is: {{ result }}</p>
+<h2>Your favorite programming language is: {{ result }}</h2>
+
+<p>Is my guess correct?</p>
+
+{% from "_formhelpers.html" import render_field %}
+<form method="POST">
+  {{ form.hidden_tag() }}
+  {{ render_field(form.result) }}
+  {{ form.submit }}
+</form>
 
 <p><a href="{{ url_for('index') }}">Start game again</a></p>
 {% endblock page_content %}

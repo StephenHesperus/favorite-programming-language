@@ -71,6 +71,12 @@ class QuestionForm(Form):
     submit = SubmitField()
 
 
+class GuessResultForm(Form):
+    result = RadioField('Result', choices=[('yes', 'Yes'), ('no', 'No')],
+                        validators=[Required()])
+    submit = SubmitField()
+
+
 class NewLanguageForm(Form):
     language = StringField('New Language Name')
     question = StringField('What makes this language different than others?')
@@ -106,15 +112,31 @@ def question():
     return render_template('question.html', question=question, form=form)
 
 
-@app.route('/guess')
+@app.route('/guess', methods=['GET', 'POST'])
 def guess():
     id_ = session.get('question_id')
+    if id_ is None:
+        return redirect(url_for('index'))
+
     lang = game.get_language(id_)
-    return render_template('guess.html', result=lang)
+    form = GuessResultForm()
+    print('form.result.data before validate', form.result.data,
+          form.validate_on_submit())
+    if form.validate_on_submit():
+        print('form.result.data', form.result.data)
+        if form.result.data == 'yes':
+            return redirect(url_for('index'))
+        else:
+            return redirect(url_for('new_language'))
+    return render_template('guess.html', result=lang, form=form)
 
 
 @app.route('/new_language', methods=['GET', 'POST'])
 def new_language():
+    id_ = session.get('question_id')
+    if id_ is None:
+        return redirect(url_for('index'))
+
     form = NewLanguageForm()
     if form.validate_on_submit():
         question = form.question.data

@@ -12,4 +12,4 @@
 
 3. After I created the flow chart, I think I need to build the database models. So I installed flask-sqlalchemy.
    I just create the LanguageTest model, and GuessGame class to do game logic.
-   Now QuestionForm.validate_on_sumbit() part has problems entering.
+   Now QuestionForm.validate_on_submit() part has problems entering.
