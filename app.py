@@ -44,25 +44,20 @@ class LanguageTest(db.Model):
                 self.question, self.answer, self.language)
 
 
-class GuessGame(object):
+def get_question(id_):
+    t = LanguageTest.query.filter_by(id=id_).first()
+    if t is not None:
+        return t.question
 
-    def get_question(self, id_):
-        t = LanguageTest.query.filter_by(id=id_).first()
-        if t is not None:
-            return t.question
+def check_answer(id_, answer):
+    t = LanguageTest.query.filter_by(id=id_).first()
+    if t is not None:
+        return t.answer == answer
 
-    def check_answer(self, id_, answer):
-        t = LanguageTest.query.filter_by(id=id_).first()
-        if t is not None:
-            return t.answer == answer
-
-    def get_language(self, id_):
-        t = LanguageTest.query.filter_by(id=id_).first()
-        if t is not None:
-            return t.language
-
-
-game = GuessGame()
+def get_language(id_):
+    t = LanguageTest.query.filter_by(id=id_).first()
+    if t is not None:
+        return t.language
 
 
 class QuestionForm(Form):
@@ -97,14 +92,14 @@ def question():
     if id_ is None:
         return redirect(url_for('index'))
 
-    question = game.get_question(id_)
+    question = get_question(id_)
     if question is None:
         return redirect(url_for('new_language'))
 
     form = QuestionForm()
     if form.validate_on_submit():
         answer = form.answer.data == 'yes'
-        if game.check_answer(id_, answer):
+        if check_answer(id_, answer):
             return redirect(url_for('guess'))
         else:
             session['question_id'] = id_ + 1
@@ -118,7 +113,7 @@ def guess():
     if id_ is None:
         return redirect(url_for('index'))
 
-    lang = game.get_language(id_)
+    lang = get_language(id_)
     form = GuessResultForm()
     print('form.result.data before validate', form.result.data,
           form.validate_on_submit())
