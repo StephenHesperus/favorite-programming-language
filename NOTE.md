@@ -13,3 +13,20 @@
 3. After I created the flow chart, I think I need to build the database models. So I installed flask-sqlalchemy.
    I just create the LanguageTest model, and GuessGame class to do game logic.
    Now QuestionForm.validate_on_submit() part has problems entering.
+
+4. After the first version, apparently it doesn't exactly match the flow control chart. So I added another version, and to make rendering form field easier, I used a macro from the web.
+
+## Comparison
+
+After I finished my project, now it's time to compare my version to Miguel Grinberg's.
+His version uses lists instead of database. And the control flow is slightly different there. But I think they both do the job.
+
+## Beyond A Working Prototype
+
+Seems like I always just right a program, and I don't have the habit of writing tests nor documentation. I guess part of the reason is of where I learnt programming. I never took a real course, everything I learnt, I mostly learnt from the internet, I do read books, but mostly electronic version. I guess if I really want to take programming seriously, I should starting doing them.
+
+And it's true for a lot of things I guess. For example, typing habit, writing habit etc..
+
+## Coming Back Again
+
+This is the date when I come back for testing and documentation: Thu Mar 17 15:05:12 CST 2016. I guess I really don't know how to do testing or documentation.

@@ -19,7 +19,7 @@ db = SQLAlchemy(app)
 app.config['SECRET_KEY'] = 'EVtH`,}c?K=/cR!l4l?.iqe>n^A<<~Z8qUmt9K3|oZ/>GSK|$Eu7nQC\'o;EIIBB9Xep{<1HTjSY4W!kB*!nwd_c1ryc7LO?/XP60eko}n}]>!T*Zi_[B0H"X"Z@0s)HTu>J`6"wx+]B~"n4IuE@#2|j=:|n7\'dtVR-t?Vb0o2x|ftFq>LNp~\'kul19WS8.yqv@j/4(VeS+_UKs`V{SQ9G}-s6~/qrbFXF[Nwh{H<xXahk}S<EnQrYj3=..Q@/Y?2'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + \
         os.path.join(basedir, 'data.sqlite')
-
+app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = True
 
 class LanguageTest(db.Model):
     __tablename__ = 'languagetests'
@@ -42,6 +42,10 @@ class LanguageTest(db.Model):
     def __repr__(self):
         return '<LanguageTest q=%r, a=%r, lang=%r>' % (
                 self.question, self.answer, self.language)
+
+
+def init_db():
+    LanguageTest.init()
 
 
 def get_question(id_):
