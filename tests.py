@@ -61,21 +61,22 @@ class FavProgLangTestCase(unittest.TestCase):
         # question page, choose yes, we have a guess result for it
         qyes = driver.find_element_by_css_selector('input[value="yes"]')
         qsubmit = driver.find_element_by_css_selector('input[type="submit"]')
-        self.assertIsNotNone(qyes,
-                'Question answer yes radio button should exist.')
+        self.assertIsNotNone(
+            qyes, 'Question answer yes radio button should exist.')
         self.assertIsNotNone(qsubmit, 'Question submit button should exist.')
         qyes.click()
         qsubmit.click()
         # guess page, we guess correctly
         gyes = driver.find_element_by_css_selector('input[value="yes"]')
         gsubmit = driver.find_element_by_css_selector('input[type="submit"]')
-        self.assertIsNotNone(gyes,
-                'Guess correctness yes radio button should exist.')
+        self.assertIsNotNone(
+            gyes, 'Guess correctness yes radio button should exist.')
         self.assertIsNotNone(gsubmit, 'Guess submit button should exist.')
         gyes.click()
         gsubmit.click()
         # redirect to index page
-        self.assertEqual(driver.current_url, self.index_page_url,
+        self.assertEqual(
+            driver.current_url, self.index_page_url,
             'It should redirect to index page %s now.' % self.index_page_url)
 
 
