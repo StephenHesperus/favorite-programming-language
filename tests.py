@@ -8,21 +8,18 @@ import os
 import unittest
 import tempfile
 
-from selenium import webdriver
-
 import app
+
+from selenium import webdriver
+from app import LanguageTest
 
 
 # functional tests
 class FavProgLangTestCase(unittest.TestCase):
     '''
     Things to test:
-    1. index page -> question page
-    2. question page -> guess correct -[yes]-> index page
-    3. guess correct -[no]-> has more questions -[yes]-> question page
-    4. guess correct -[no]-> has more questions -[no]-> add new language
-       page
-    5. add new language page -> index page
+        - All the flows in app-flow-chart.svg
+        - Can't go to any other pages without starting from index page
     '''
 
     def setUp(self):
@@ -78,6 +75,43 @@ class FavProgLangTestCase(unittest.TestCase):
         self.assertEqual(
             driver.current_url, self.index_page_url,
             'It should redirect to index page %s now.' % self.index_page_url)
+
+    def test_no_guess_for_question_has_more_questions_go_to_next_question(self):
+        """
+        This test tests this story:
+        Index Page -> Question Page -> Have A Guess?
+            -[No]-> Has More Questions? -[Yes]-> Question Page
+        During test, we assume the first two records in database language test
+        table are:
+        LanguageTest('Is it interpreted?', True, 'Python')
+        LanguageTest('Does it enforce indentation?', False, 'Ruby')
+        """
+        # Setup test database
+        lt = LanguageTest('Does it enforce indentation?', False, 'Ruby')
+        app.db.session.add(lt)
+        app.db.session.commit()
+
+        driver = self.driver
+        # Index page to question page
+        driver.get(self.index_page_url)
+        qlink = driver.find_element_by_tag_name('a')
+        qlink.click()
+        # Question page, choose no, we don't have a guess result for it
+        qno = driver.find_element_by_css_selector('input[value="no"]')
+        qsubmit = driver.find_element_by_css_selector('input[type="submit"]')
+        self.assertIsNotNone(
+            qno, 'Question answer no radio button should exist.')
+        self.assertIsNotNone(qsubmit, 'Question submit button should exist.')
+        qno.click()
+        qsubmit.click()
+        # We should go back to question page now, which shows the second
+        # question.
+        self.assertEqual(driver.current_url, self.index_page_url + 'question',
+                         'We should be at question page now.')
+
+    @unittest.skip('WIP')
+    def test_guess_wrongly_no_more_questions_go_to_new_language_page(self):
+        pass
 
 
 if __name__ == '__main__':
