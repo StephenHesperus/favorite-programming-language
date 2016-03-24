@@ -43,6 +43,10 @@ class LanguageTest(db.Model):
         return '<LanguageTest q=%r, a=%r, lang=%r>' % (
                 self.question, self.answer, self.language)
 
+    def __eq__(self, other):
+        return (self.question == other.question and
+                self.answer == other.answer and
+                self.language == other.language)
 
 def init_db():
     LanguageTest.init()

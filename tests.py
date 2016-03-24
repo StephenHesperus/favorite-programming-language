@@ -28,7 +28,8 @@ class FavProgLangTestCase(unittest.TestCase):
         self.app = app.app.test_client()
         app.init_db()
         self.index_page_url = 'http://127.0.0.1:5000/'
-        self.driver = webdriver.Chrome()
+        #  self.driver = webdriver.Chrome()
+        self.driver = webdriver.Firefox()
 
     def tearDown(self):
         os.close(self.db_fd)
@@ -46,7 +47,7 @@ class FavProgLangTestCase(unittest.TestCase):
         This test tests this story:
         Index Page -> Question Page -> Have A Guess? -[Yes]-> Guess Page
             -> Guess Correct? -[Yes]-> Index Page
-        During test, we assume the first record in database language test
+        During test, we assume the _first_ record in database language test
         table is:
         LanguageTest('Is it interpreted?', True, 'Python')
         """
@@ -81,7 +82,7 @@ class FavProgLangTestCase(unittest.TestCase):
         This test tests this story:
         Index Page -> Question Page -> Have A Guess?
             -[No]-> Has More Questions? -[Yes]-> Question Page
-        During test, we assume the first two records in database language test
+        During test, we assume the _first two_ records in database language test
         table are:
         LanguageTest('Is it interpreted?', True, 'Python')
         LanguageTest('Does it enforce indentation?', False, 'Ruby')
@@ -109,9 +110,59 @@ class FavProgLangTestCase(unittest.TestCase):
         self.assertEqual(driver.current_url, self.index_page_url + 'question',
                          'We should be at question page now.')
 
-    @unittest.skip('WIP')
-    def test_guess_wrongly_no_more_questions_go_to_new_language_page(self):
-        pass
+    def test_cannot_guess_language_go_to_new_language_page_finish_game(self):
+        """
+        This test tests this story:
+        Index Page -> Question Page -> Have A Guess? -[Yes]-> Guess Page
+            -> Guess Correct? -[No]-> Has More Questions?
+            -[No]-> Add New Language Page -> Index Page
+        During test, we assume the _only_ record in database language test
+        table is:
+        LanguageTest('Is it interpreted?', True, 'Python')
+        """
+        driver = self.driver
+        # Index page to question page
+        driver.get(self.index_page_url)
+        qlink = driver.find_element_by_tag_name('a')
+        qlink.click()
+        # Question page, choose yes, we have a guess result for it
+        qyes = driver.find_element_by_css_selector('input[value="yes"]')
+        qsubmit = driver.find_element_by_css_selector('input[type="submit"]')
+        self.assertIsNotNone(
+            qyes, 'Question answer yes radio button should exist.')
+        self.assertIsNotNone(qsubmit, 'Question submit button should exist.')
+        qyes.click()
+        qsubmit.click()
+        # Guess page, choose _no_, our guess is wrong
+        gno = driver.find_element_by_css_selector('input[value="no"]')
+        gsubmit = driver.find_element_by_css_selector('input[type="submit"]')
+        self.assertIsNotNone(
+            gno, 'Guess correctness no radio button should exist.')
+        self.assertIsNotNone(gsubmit, 'Guess submit button should exist.')
+        gno.click()
+        gsubmit.click()
+        # Since we don't know about the language, we go to add new language
+        # page.
+        self.assertEqual(driver.current_url,
+            self.index_page_url + 'new_language',
+            'We should be at new language page now.')
+        # And since we're here, we'll add the new language.
+        llang = driver.find_element_by_css_selector('input[name="language"')
+        lq = driver.find_element_by_css_selector('input[name="question"]')
+        layes = driver.find_element_by_css_selector(
+                'input[name="answer"][value="yes"]')
+        lsubmit = driver.find_element_by_css_selector('input[type="submit"]')
+        llang.send_keys('Ruby')
+        lq.send_keys('Does it enforce indentation?')
+        layes.click()
+        lsubmit.click()
+        # Now we should be at index page now
+        self.assertEqual(driver.current_url, self.index_page_url,
+            'We should be at index page by now.')
+        # At last, we will verify the new language is entered into the database
+        t = LanguageTest.query.order_by('-id').first()
+        nl = LanguageTest('Does it enforce indentation?', True, 'Ruby')
+        self.assertEqual(t, nl, '%r should be in database now' % nl)
 
 
 if __name__ == '__main__':
