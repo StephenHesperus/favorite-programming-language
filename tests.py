@@ -19,8 +19,8 @@ from app import init_db
 class FavProgLangTestCase(unittest.TestCase):
     '''
     Things to test:
-        - All the flows in app-flow-chart.svg
-        - Can't go to any other pages without starting from index page
+        x All the flows in app-flow-chart.svg
+        x Can't go to any other pages without starting from index page
     Setup:
         - A running testing server hosting the application
     '''
@@ -182,6 +182,24 @@ class FavProgLangTestCase(unittest.TestCase):
         t = LanguageTest.query.order_by(-LanguageTest.id).first()
         nl = LanguageTest('Does it enforce indentation?', False, 'Ruby')
         self.assertEqual(t, nl, '%r should be in database now' % nl)
+
+    def test_can_not_go_to_question_page_initially(self):
+        driver = self.driver
+        driver.get(self.index_page_url + 'question')
+        self.assertEqual(driver.current_url, self.index_page_url,
+            'We can\'t go to question page not from index page.')
+
+    def test_can_not_go_to_guess_page_initially(self):
+        driver = self.driver
+        driver.get(self.index_page_url + 'guess')
+        self.assertEqual(driver.current_url, self.index_page_url,
+            'We can\'t go to guess page not from index page.')
+
+    def test_can_not_go_to_add_new_language_page_initially(self):
+        driver = self.driver
+        driver.get(self.index_page_url + 'new_language')
+        self.assertEqual(driver.current_url, self.index_page_url,
+            'We can\'t go to add new language page not from index page.')
 
 
 # Unit Testing
