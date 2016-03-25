@@ -1,4 +1,5 @@
 import os
+import sys
 
 from flask import Flask
 from flask import render_template
@@ -29,7 +30,7 @@ class LanguageTest(db.Model):
     language = db.Column(db.String(50), nullable=False)
 
     @staticmethod
-    def init():
+    def init(db):
         langtest = LanguageTest('Is it interpreted?', True, 'Python')
         db.session.add(langtest)
         db.session.commit()
@@ -48,8 +49,10 @@ class LanguageTest(db.Model):
                 self.answer == other.answer and
                 self.language == other.language)
 
-def init_db():
-    LanguageTest.init()
+def init_db(db):
+    db.create_all()
+    db.session.commit()
+    LanguageTest.init(db)
 
 
 def get_question(id_):
@@ -123,10 +126,7 @@ def guess():
 
     lang = get_language(id_)
     form = GuessResultForm()
-    print('form.result.data before validate', form.result.data,
-          form.validate_on_submit())
     if form.validate_on_submit():
-        print('form.result.data', form.result.data)
         if form.result.data == 'yes':
             return redirect(url_for('index'))
         else:
@@ -154,4 +154,9 @@ def new_language():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    #  app.run(debug=True)
+    # Here we'll use a shortcut to configure the running app instance using
+    # sys.argv.
+    debug = '--debug' in sys.argv
+    init_db(db)
+    app.run(debug=debug)

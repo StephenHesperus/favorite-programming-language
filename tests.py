@@ -8,10 +8,11 @@ import os
 import unittest
 import tempfile
 
-import app
-
 from selenium import webdriver
 from app import LanguageTest
+from app import app
+from app import db
+from app import init_db
 
 
 # functional tests
@@ -20,26 +21,44 @@ class FavProgLangTestCase(unittest.TestCase):
     Things to test:
         - All the flows in app-flow-chart.svg
         - Can't go to any other pages without starting from index page
+    Setup:
+        - A running testing server hosting the application
     '''
 
+    index_page_url = 'http://127.0.0.1:5000/'
+
+    @classmethod
+    def setUpClass(cls):
+        cls.db_fd, app.config['DATABASE'] = tempfile.mkstemp()
+        app.config['TESTING'] = True
+        #  cls.driver = webdriver.Chrome()
+        cls.driver = webdriver.Firefox()
+
+    @classmethod
+    def tearDownClass(cls):
+        os.close(cls.db_fd)
+        os.unlink(app.config['DATABASE'])
+        cls.driver.close()
+
     def setUp(self):
-        self.db_fd, app.app.config['DATABASE'] = tempfile.mkstemp()
-        app.app.config['TESTING'] = True
-        self.app = app.app.test_client()
-        app.init_db()
-        self.index_page_url = 'http://127.0.0.1:5000/'
-        #  self.driver = webdriver.Chrome()
-        self.driver = webdriver.Firefox()
+        db.drop_all()
+        db.create_all()
+        db.session.commit()
+        init_db(db)
+        self.driver.delete_all_cookies()
 
     def tearDown(self):
-        os.close(self.db_fd)
-        os.unlink(app.app.config['DATABASE'])
-        self.driver.close()
+        # Since the testing driver is setup outside of this testing, we have to
+        # make sure it's clean after we are done with it.
+        db.drop_all()
+        db.session.commit()
+
 
     def test_index_page_can_go_to_question_page(self):
-        resp = self.app.get('/')
-        question = b'/question'
-        self.assertIn(question, resp.data,
+        driver = self.driver
+        driver.get(self.index_page_url)
+        qlink = driver.find_element_by_tag_name('a')
+        self.assertIn('/question', qlink.get_attribute('href'),
                       'Question page url is not in index page.')
 
     def test_question_has_a_correct_guess_finish_game(self):
@@ -89,8 +108,8 @@ class FavProgLangTestCase(unittest.TestCase):
         """
         # Setup test database
         lt = LanguageTest('Does it enforce indentation?', False, 'Ruby')
-        app.db.session.add(lt)
-        app.db.session.commit()
+        db.session.add(lt)
+        db.session.commit()
 
         driver = self.driver
         # Index page to question page
@@ -149,20 +168,39 @@ class FavProgLangTestCase(unittest.TestCase):
         # And since we're here, we'll add the new language.
         llang = driver.find_element_by_css_selector('input[name="language"')
         lq = driver.find_element_by_css_selector('input[name="question"]')
-        layes = driver.find_element_by_css_selector(
-                'input[name="answer"][value="yes"]')
+        lano = driver.find_element_by_css_selector(
+                'input[name="answer"][value="no"]')
         lsubmit = driver.find_element_by_css_selector('input[type="submit"]')
         llang.send_keys('Ruby')
         lq.send_keys('Does it enforce indentation?')
-        layes.click()
+        lano.click()
         lsubmit.click()
         # Now we should be at index page now
         self.assertEqual(driver.current_url, self.index_page_url,
             'We should be at index page by now.')
         # At last, we will verify the new language is entered into the database
-        t = LanguageTest.query.order_by('-id').first()
-        nl = LanguageTest('Does it enforce indentation?', True, 'Ruby')
+        t = LanguageTest.query.order_by(-LanguageTest.id).first()
+        nl = LanguageTest('Does it enforce indentation?', False, 'Ruby')
         self.assertEqual(t, nl, '%r should be in database now' % nl)
+
+
+# Unit Testing
+class FavProgLangUnitTestCase(unittest.TestCase):
+
+    def setUp(self):
+        self.db_fd, app.config['DATABASE'] = tempfile.mkstemp()
+        app.config['TESTING'] = True
+
+    def tearDown(self):
+        os.close(self.db_fd)
+        os.unlink(app.config['DATABASE'])
+
+    def test_init_db(self):
+        init_db(db)
+        lts = LanguageTest.query.all()
+        self.assertEqual(
+            lts, [LanguageTest('Is it interpreted?', True, 'Python')],
+            'LanguagetTest should have one record.')
 
 
 if __name__ == '__main__':
