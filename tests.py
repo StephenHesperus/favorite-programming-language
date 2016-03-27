@@ -16,6 +16,7 @@ from app import init_db
 
 
 # functional tests
+@unittest.skip('DONE')
 class FavProgLangTestCase(unittest.TestCase):
     '''
     Things to test:
@@ -208,6 +209,7 @@ class FavProgLangUnitTestCase(unittest.TestCase):
     def setUp(self):
         self.db_fd, app.config['DATABASE'] = tempfile.mkstemp()
         app.config['TESTING'] = True
+        self.client = app.test_client()
 
     def tearDown(self):
         os.close(self.db_fd)
@@ -219,6 +221,13 @@ class FavProgLangUnitTestCase(unittest.TestCase):
         self.assertEqual(
             lts, [LanguageTest('Is it interpreted?', True, 'Python')],
             'LanguagetTest should have one record.')
+
+    def test_index_page_route(self):
+        # Test index page can start the game.
+        client = self.client
+        resp = client.get('/')
+        self.assertIn(b'/question', resp.data,
+                      'Question page links should be in index page.')
 
 
 if __name__ == '__main__':
