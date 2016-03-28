@@ -15,6 +15,9 @@ from app import db
 from app import init_db
 
 
+basedir = os.path.abspath(os.path.dirname(__name__))
+
+
 # functional tests
 @unittest.skip('DONE')
 class FavProgLangTestCase(unittest.TestCase):
@@ -30,15 +33,14 @@ class FavProgLangTestCase(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.db_fd, app.config['DATABASE'] = tempfile.mkstemp()
+        app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + \
+            os.path.join(basedir, 'functional_testing.sqlite')
         app.config['TESTING'] = True
         #  cls.driver = webdriver.Chrome()
         cls.driver = webdriver.Firefox()
 
     @classmethod
     def tearDownClass(cls):
-        os.close(cls.db_fd)
-        os.unlink(app.config['DATABASE'])
         cls.driver.close()
 
     def setUp(self):
@@ -206,21 +208,28 @@ class FavProgLangTestCase(unittest.TestCase):
 # Unit Testing
 class FavProgLangUnitTestCase(unittest.TestCase):
 
-    def setUp(self):
-        self.db_fd, app.config['DATABASE'] = tempfile.mkstemp()
+    @classmethod
+    def setUpClass(cls):
+        app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + \
+            os.path.join(basedir, 'unit_testing.sqlite')
         app.config['TESTING'] = True
+
+    def setUp(self):
         self.client = app.test_client()
+        db.drop_all()
+        db.create_all()
+        db.session.commit()
 
     def tearDown(self):
-        os.close(self.db_fd)
-        os.unlink(app.config['DATABASE'])
+        db.drop_all()
+        db.session.commit()
 
     def test_init_db(self):
         init_db(db)
         lts = LanguageTest.query.all()
         self.assertEqual(
             lts, [LanguageTest('Is it interpreted?', True, 'Python')],
-            'LanguagetTest should have one record.')
+            'LanguagetTest should have one record. %r' % lts)
 
     def test_index_page_route(self):
         # Test index page can start the game.
@@ -228,6 +237,9 @@ class FavProgLangUnitTestCase(unittest.TestCase):
         resp = client.get('/')
         self.assertIn(b'/question', resp.data,
                       'Question page links should be in index page.')
+
+    def test_quest_page_route_get(self):
+        self.fail('WIP')
 
 
 if __name__ == '__main__':
