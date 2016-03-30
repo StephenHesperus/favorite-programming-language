@@ -43,6 +43,9 @@ class FavProgLangTestCase(unittest.TestCase):
         cls.ctx.pop()
 
     def setUp(self):
+        if not self.driver:
+            self.skipTest('Webdriver not ready.')
+
         db.create_all()
         # Populate database with data.
         LanguageTest.init(db)
