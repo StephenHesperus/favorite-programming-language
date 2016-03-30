@@ -91,4 +91,4 @@ def server_shutdown():
     if not shutdown:
         abort(500)
     shutdown()
-    return 'Shutting down...'
+    return 'Shutting down...', 200
