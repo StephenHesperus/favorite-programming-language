@@ -163,3 +163,45 @@ class GuessViewTestCase(ViewTestCaseBase):
         self.assertEqual(qp.encode(), resp.data,
             'Guess the language wrongly goes to the next question page when'
             'there are more questions.')
+
+
+class NewLanguageViewTestCase(ViewTestCaseBase):
+
+    def test_new_language_view_get_redirect_to_index_view(self):
+        '''Test going directly to new language page redirects to index page.'''
+        client = self.client
+        resp = client.get(url_for('main.new_language'), follow_redirects=True)
+        self.assertEqual(render_template('index.html').encode(), resp.data,
+            'Going directly to new language page should redirect to index page.')
+
+    def test_new_language_view_get(self):
+        '''Testing going new language page with session set.'''
+        client = self.client
+        with client.session_transaction() as sess:
+            sess['question_id'] = 1
+        resp = client.get(url_for('main.new_language'), follow_redirects=True)
+        self.assertEqual(
+            render_template('new_language.html', form=NewLanguageForm()),
+            resp.data.decode(),
+            'Testing going new language page with session set.')
+
+    def test_new_language_view_post(self):
+        '''Test adding new language.'''
+        client = self.client
+        with client.session_transaction() as sess:
+            sess['question_id'] = 1
+        data = dict(
+            question='Does it enforce indentation?',
+            answer='no',
+            language='Ruby'
+        )
+        resp = client.post(url_for('main.new_language'), data=data,
+                           follow_redirects=True)
+        self.assertEqual(render_template('index.html').encode(), resp.data,
+            'Adding new language successfully redirects to index page.')
+
+        data['answer'] = False
+        new_lang_test = LanguageTest(**data)
+        new_record = LanguageTest.query.order_by(-LanguageTest.id).first()
+        self.assertEqual(new_lang_test, new_record,
+                         '%s should be in database now.' % new_lang_test)
