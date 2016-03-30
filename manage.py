@@ -1,6 +1,11 @@
 #!/usr/bin/env python
 import os
 
+# Start coverage as early as possible.
+import coverage as coveragepy
+COV = coveragepy.coverage(branch=True, include='app/*')
+COV.start()
+
 from flask.ext.script import Manager
 from flask.ext.script import Shell
 from flask.ext.migrate import Migrate
@@ -25,31 +30,30 @@ manager.add_command('db', MigrateCommand)
 
 
 @manager.command
-def test(coverage=False):
+def test(coverage=False, no_functional=False):
     '''Run all the tests.'''
+
     import unittest
     unit_tests = unittest.TestLoader().discover('tests')
-    functional_tests = unittest.TestLoader().discover(
+    ftests = unittest.TestLoader().discover(
         'tests', pattern='functional*.py')
-    tests = unittest.TestSuite(tests=(unit_tests, functional_tests))
-
-    if coverage:
-        import coverage as coveragepy
-        cov = coveragepy.coverage(branch=True, include='app/*')
-        cov.start()
+    if no_functional:
+        tests = unit_tests
+    else:
+        tests = unittest.TestSuite(tests=(unit_tests, ftests))
 
     unittest.TextTestRunner(verbosity=2).run(tests)
 
     if coverage:
-        cov.stop()
-        cov.save()
+        COV.stop()
+        COV.save()
         print('-'*80, 'Coverage Summary:', sep='\n')
-        cov.report()
+        COV.report()
         basedir = os.path.abspath(os.path.dirname(__file__))
         covdir = os.path.join(basedir, 'covhtml')
-        cov.html_report(directory=covdir)
+        COV.html_report(directory=covdir)
         print('HTML version: file://%s/index.html' % covdir)
-        cov.erase()
+        COV.erase()
 
 
 @manager.command
