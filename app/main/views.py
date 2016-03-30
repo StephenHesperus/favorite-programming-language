@@ -56,7 +56,12 @@ def guess():
         if form.result.data == 'yes':
             return redirect(url_for('.index'))
         else:
-            return redirect(url_for('.new_language'))
+            question = get_question(id_ + 1)
+            if question:
+                session['question_id'] = id_ + 1
+                return redirect(url_for('.question'))
+            else:
+                return redirect(url_for('.new_language'))
     return render_template('guess.html', result=lang, form=form)
 
 

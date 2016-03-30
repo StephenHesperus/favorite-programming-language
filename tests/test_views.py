@@ -101,3 +101,65 @@ class QuestionViewTestCase(ViewTestCaseBase):
         self.assertEqual(resp.data.decode(), render_template(
                 'question.html', form=QuestionForm(), question=q
             ), 'No guess to the question redirects to the next question.')
+
+
+class GuessViewTestCase(ViewTestCaseBase):
+
+    def test_guess_view_get_redirect_to_index_view(self):
+        '''Test going directly to guess page redirects to index page.'''
+        client = self.client
+        resp = client.get(url_for('main.guess'), follow_redirects=True)
+        self.assertEqual(render_template('index.html').encode(), resp.data,
+            'Going directly to question should redirect to index page.')
+
+    def test_guess_view_post_redirect_to_index_view(self):
+        '''Guess the language correctly returns to index page.'''
+        client = self.client
+        with client.session_transaction() as sess:
+            sess['question_id'] = 1
+        resp = client.post(url_for('main.guess'), data=dict(
+                result='yes'
+            ), follow_redirects=True)
+        self.assertEqual(render_template('index.html').encode(), resp.data,
+            'Guess the language correctly returns to index page.')
+
+    def test_guess_view_post_redirect_to_new_language_view(self):
+        '''
+        Guess the language wrongly goes to new language page when
+        there is no more question.
+        '''
+        # By default, we only have one question in database.
+        client = self.client
+        with client.session_transaction() as sess:
+            sess['question_id'] = 1
+        resp = client.post(url_for('main.guess'), data=dict(
+                result='no'
+            ), follow_redirects=True)
+        self.assertEqual(
+            render_template('new_language.html', form=NewLanguageForm()),
+            resp.data.decode(),
+            'Guess the language wrongly goes to new language page when'
+            'there is no more question.')
+
+    def test_guess_view_post_redirect_to_question_view(self):
+        '''
+        Guess the language wrongly goes to the next question page when
+        there are more questions.
+        '''
+        # Add another record to the database so that we have another question
+        # to redirect to.
+        lt = LanguageTest('Does it enforce indentation?', False, 'Ruby')
+        db.session.add(lt)
+        db.session.commit()
+
+        client = self.client
+        with client.session_transaction() as sess:
+            sess['question_id'] = 1
+        resp = client.post(url_for('main.guess'), data=dict(
+                result='no'
+            ), follow_redirects=True)
+        q = get_question(sess['question_id'] + 1)
+        qp = render_template('question.html', form=QuestionForm(), question=q)
+        self.assertEqual(qp.encode(), resp.data,
+            'Guess the language wrongly goes to the next question page when'
+            'there are more questions.')
