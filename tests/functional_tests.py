@@ -36,24 +36,22 @@ class FavProgLangTestCase(unittest.TestCase):
         cls.ctx = cls.app.app_context()
         cls.ctx.push()
 
-        db.create_all()
-        # Populate database with data.
-        LanguageTest.init(db)
-
     @classmethod
     def tearDownClass(cls):
         cls.driver.get(cls.index_page_url + 'shutdown')
         cls.driver.close()
-        db.drop_all()
-        db.session.remove()
         cls.ctx.pop()
 
     def setUp(self):
         db.create_all()
+        # Populate database with data.
+        LanguageTest.init(db)
+
         self.driver.delete_all_cookies()
 
     def tearDown(self):
-        pass
+        db.session.remove()
+        db.drop_all()
 
     def test_index_page_can_go_to_question_page(self):
         driver = self.driver
@@ -63,20 +61,20 @@ class FavProgLangTestCase(unittest.TestCase):
                       'Question page url is not in index page.')
 
     def test_question_has_a_correct_guess_finish_game(self):
-        """
+        '''
         This test tests this story:
         Index Page -> Question Page -> Have A Guess? -[Yes]-> Guess Page
             -> Guess Correct? -[Yes]-> Index Page
         During test, we assume the _first_ record in database language test
         table is:
         LanguageTest('Is it interpreted?', True, 'Python')
-        """
+        '''
         driver = self.driver
         # index page to question page
         driver.get(self.index_page_url)
         qlink = driver.find_element_by_tag_name('a')
         qlink.click()
-        # question page, choose yes, we have a guess result for it
+        # Question page, choose yes, we have a guess result for it.
         qyes = driver.find_element_by_css_selector('input[value="yes"]')
         qsubmit = driver.find_element_by_css_selector('input[type="submit"]')
         self.assertIsNotNone(
@@ -98,7 +96,7 @@ class FavProgLangTestCase(unittest.TestCase):
             'It should redirect to index page %s now.' % self.index_page_url)
 
     def test_no_guess_for_question_has_more_questions_go_to_next_question(self):
-        """
+        '''
         This test tests this story:
         Index Page -> Question Page -> Have A Guess?
             -[No]-> Has More Questions? -[Yes]-> Question Page
@@ -106,7 +104,7 @@ class FavProgLangTestCase(unittest.TestCase):
         table are:
         LanguageTest('Is it interpreted?', True, 'Python')
         LanguageTest('Does it enforce indentation?', False, 'Ruby')
-        """
+        '''
         # Setup test database
         lt = LanguageTest('Does it enforce indentation?', False, 'Ruby')
         db.session.add(lt)
@@ -129,9 +127,56 @@ class FavProgLangTestCase(unittest.TestCase):
         # question.
         self.assertEqual(driver.current_url, self.index_page_url + 'question',
                          'We should be at question page now.')
+        next_question = driver.find_element_by_tag_name('h2').text
+        self.assertEqual(next_question, lt.question,
+                         'Next question should be %s' % lt.question)
+
+    def test_cannot_guess_from_current_question_go_to_next_question(self):
+        '''
+        This test tests this story:
+        Index Page -> Question Page -> Have A Guess?
+            -[Yes]-> Guess Page -> Guess Correctly?
+            -[No]-> Has More Questions? -[Yes]-> Question Page
+        During test, we assume the _first two_ records in database language test
+        table are:
+        LanguageTest('Is it interpreted?', True, 'Python')
+        LanguageTest('Does it enforce indentation?', False, 'Ruby')
+        '''
+        # Setup test database
+        lt = LanguageTest('Does it enforce indentation?', False, 'Ruby')
+        db.session.add(lt)
+        db.session.commit()
+
+        driver = self.driver
+        # Index page to question page
+        driver.get(self.index_page_url)
+        qlink = driver.find_element_by_tag_name('a')
+        qlink.click()
+        # Question page, choose yes, we have a guess result for it.
+        qyes = driver.find_element_by_css_selector('input[value="yes"]')
+        qsubmit = driver.find_element_by_css_selector('input[type="submit"]')
+        self.assertIsNotNone(
+            qyes, 'Question answer yes radio button should exist.')
+        self.assertIsNotNone(qsubmit, 'Question submit button should exist.')
+        qyes.click()
+        qsubmit.click()
+        # Guess page, choose _no_, our guess is wrong.
+        gno = driver.find_element_by_css_selector('input[value="no"]')
+        gsubmit = driver.find_element_by_css_selector('input[type="submit"]')
+        self.assertIsNotNone(
+            gno, 'Guess correctness no radio button should exist.')
+        self.assertIsNotNone(gsubmit, 'Guess submit button should exist.')
+        gno.click()
+        gsubmit.click()
+        # Since there're more questions, it will go to the next question now.
+        self.assertEqual(driver.current_url, self.index_page_url + 'question',
+                         'We should see the next question page now.')
+        next_question = driver.find_element_by_tag_name('h2').text
+        self.assertEqual(next_question, lt.question,
+                         'Next question should be %s' % lt.question)
 
     def test_cannot_guess_language_go_to_new_language_page_finish_game(self):
-        """
+        '''
         This test tests this story:
         Index Page -> Question Page -> Have A Guess? -[Yes]-> Guess Page
             -> Guess Correct? -[No]-> Has More Questions?
@@ -139,7 +184,7 @@ class FavProgLangTestCase(unittest.TestCase):
         During test, we assume the _only_ record in database language test
         table is:
         LanguageTest('Is it interpreted?', True, 'Python')
-        """
+        '''
         driver = self.driver
         # Index page to question page
         driver.get(self.index_page_url)
