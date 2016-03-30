@@ -84,3 +84,5 @@ class LanguageTestModelTestCase(ModelTestCaseBase):
         self.assertTrue(has_guess1, 'has_guess1 should be True.')
         has_guess2 = check_answer(1, False)
         self.assertFalse(has_guess2, 'has_guess2 should be False.')
+        has_guess3 = check_answer(100, True)
+        self.assertIsNone(has_guess3)
