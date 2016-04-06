@@ -5,6 +5,7 @@ Flask-WTF
 Flask-Script
 
 sphinx
+sphinx-autobuild
 coverage
 selenium
 ipython
