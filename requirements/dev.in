@@ -1,0 +1,11 @@
+Flask
+Flask-Migrate
+Flask-SQLAlchemy
+Flask-WTF
+Flask-Script
+
+sphinx
+coverage
+selenium
+ipython
+pip-tools
