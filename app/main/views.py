@@ -19,12 +19,34 @@ from ..models import LanguageTest
 
 @main.route('/')
 def index():
+    '''
+    Home Page.
+    '''
     session['question_id'] = 1
     return render_template('index.html')
 
 
 @main.route('/question', methods=['GET', 'POST'])
 def question():
+    '''
+    .. http:get:: /question
+
+       Show a question form on the page.
+
+    .. http:post:: /question
+
+       Check user's answer against database record.
+
+       :form answer: The user's answer(yes/no) to the question
+       :status 302: When the game is not started from index page,
+                      redirect to :http:get:`/`
+                    when there's no more question,
+                      redirect to :http:get:`/new_language`
+                    when form parameters are missing,
+                      return to the same page
+                    when there's a guess,
+                      redirect to :http:get:`/guess`
+    '''
     id_ = session.get('question_id')
     if id_ is None:
         return redirect(url_for('.index'))
@@ -46,6 +68,25 @@ def question():
 
 @main.route('/guess', methods=['GET', 'POST'])
 def guess():
+    '''
+    .. http:get:: /guess
+
+       Show a guess result form on the page.
+
+    .. http:post:: /guess
+
+       See if the user agree with our guess.
+
+       :form result: The user agrees/disagrees(yes/no) with the guess
+       :status 302: When the game is not started from index page,
+                      redirect to :http:get:`/`
+                    when form parameters are missing,
+                      return to the same page
+                    when the user agrees with the guess,
+                      finish the game, redirect to :http:get:`/`
+                    when the user disagrees with the guess,
+                      redirect to the next question :http:get:`/question`
+    '''
     id_ = session.get('question_id')
     if id_ is None:
         return redirect(url_for('.index'))
@@ -67,6 +108,25 @@ def guess():
 
 @main.route('/new_language', methods=['GET', 'POST'])
 def new_language():
+    '''
+    .. http:get:: /new_language
+
+       Show a new language test submission form.
+
+    .. http:post:: /new_language
+
+       Add a new language test to the database.
+
+       :form question: The question of the test
+       :form answer: The answer to the question
+       :form language: The language name for the question
+       :status 302: When the game is not started from index page,
+                      redirect to :http:get:`/`
+                    when form parameters are missing,
+                      return to the same page
+                    when the language test is added,
+                      finish the game, redirect to :http:get:`/`
+    '''
     id_ = session.get('question_id')
     if id_ is None:
         return redirect(url_for('.index'))
@@ -85,6 +145,12 @@ def new_language():
 
 @main.route('/shutdown')
 def server_shutdown():
+    '''
+    .. note:: For development only, to use it, make sure
+       :attr:`current_app.testing` is ``True``.
+
+    Shut down the developement server.
+    '''
     if not current_app.testing:
         abort(404)
     shutdown = request.environ.get('werkzeug.server.shutdown')

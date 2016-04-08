@@ -30,3 +30,15 @@ And it's true for a lot of things I guess. For example, typing habit, writing ha
 ## Coming Back Again
 
 This is the date when I come back for testing and documentation: Thu Mar 17 15:05:12 CST 2016. I guess I really don't know how to do testing or documentation.
+
+## All The Tests Are Done
+
+After the tests, it's documentation and refactor.
+
+## Documentation
+
+Roadmap:
+* config module
+* manage module
+
+Use exception instead of return `None` in model functions?
