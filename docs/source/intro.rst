@@ -87,6 +87,9 @@ Project Explained
 In :mod:`app`, we use :func:`app.create_app` to create instance of the
 application, using configuration in :mod:`config`.
 
+To run the application, use :file:`manage.py`, run command ``./manage.py
+--help`` to find out its usage.
+
 API Reference
 -------------
 

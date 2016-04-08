@@ -38,14 +38,7 @@ After the tests, it's documentation and refactor.
 ## Documentation
 
 Roadmap:
-  * intro
-    - how it works
-    - structure
-      - tests
-    - table of content
-    - python.org doc sphinx.ext.source source file links
-  * api
-    - app module
-  * license
+* config module
+* manage module
 
 Use exception instead of return `None` in model functions?
