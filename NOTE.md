@@ -34,3 +34,18 @@ This is the date when I come back for testing and documentation: Thu Mar 17 15:0
 ## All The Tests Are Done
 
 After the tests, it's documentation and refactor.
+
+## Documentation
+
+Roadmap:
+  * intro
+    - how it works
+    - structure
+      - tests
+    - table of content
+    - python.org doc sphinx.ext.source source file links
+  * api
+    - app module
+  * license
+
+Use exception instead of return `None` in model functions?

@@ -6,6 +6,8 @@ Flask-Script
 
 sphinx
 sphinx-autobuild
+sphinx_rtd_theme
+sphinxcontrib-httpdomain
 coverage
 selenium
 ipython

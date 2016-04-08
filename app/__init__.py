@@ -9,6 +9,15 @@ db = SQLAlchemy()
 
 
 def create_app(config_name):
+    '''
+    Return a Flask application instance given the configuration name.
+
+    :param str config_name: The name of the configuration, ``'development'``,
+                            ``'testing'``, ``'production'``, or ``'default'``
+                            which is ``'development'``
+    :return: A Flask application instance
+    :rtype: ``Flask``
+    '''
     app = Flask(__name__)
     app.config.from_object(config[config_name])
     config[config_name].init_app(app)

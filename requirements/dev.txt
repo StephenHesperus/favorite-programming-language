@@ -39,10 +39,12 @@ pytz==2016.3              # via babel
 PyYAML==3.11              # via sphinx-autobuild, watchdog
 selenium==2.52.0
 simplegeneric==0.8.1      # via ipython
-six==1.10.0               # via livereload, pip-tools, sphinx
+six==1.10.0               # via livereload, pip-tools, sphinx, sphinxcontrib-httpdomain
 snowballstemmer==1.2.1    # via sphinx
 sphinx-autobuild==0.6.0
+sphinx-rtd-theme==0.1.9
 sphinx==1.4
+sphinxcontrib-httpdomain==1.4.0
 SQLAlchemy==1.0.12        # via alembic, flask-sqlalchemy
 tornado==4.3              # via livereload, sphinx-autobuild
 traitlets==4.2.1          # via ipython

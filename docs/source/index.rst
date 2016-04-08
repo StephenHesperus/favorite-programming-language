@@ -11,6 +11,10 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
+   self
+   intro
+   apidoc
+   license
 
 
 Indices and tables
