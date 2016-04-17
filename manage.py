@@ -2,9 +2,11 @@
 import os
 
 # Start coverage as early as possible.
-import coverage as coveragepy
-COV = coveragepy.coverage(branch=True, include='app/*')
-COV.start()
+COV = None
+if os.environ.get('COVERAGE') is not None:
+    import coverage as coveragepy
+    COV = coveragepy.coverage(branch=True, include='app/*')
+    COV.start()
 
 from flask.ext.script import Manager
 from flask.ext.script import Shell
@@ -44,7 +46,7 @@ def test(coverage=False, no_functional=False):
 
     unittest.TextTestRunner(verbosity=2).run(tests)
 
-    if coverage:
+    if coverage and COV is not None:
         COV.stop()
         COV.save()
         print('-'*80, 'Coverage Summary:', sep='\n')
