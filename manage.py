@@ -57,14 +57,18 @@ def test(coverage=False, no_functional=False):
 
 
 @manager.command
-def deploy():
-    """Run deployment tasks."""
+def upgrade_db():
+    '''Upgrade the database.'''
     from flask.ext.migrate import upgrade
-    from app.models import LanguageTest
 
     # migrate database to latest revision
     upgrade()
 
+
+@manager.command
+def init_db():
+    '''Populate database with initial data.'''
+    from app.models import LanguageTest
     # initialize database
     LanguageTest.init(db)
 
