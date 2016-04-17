@@ -59,16 +59,7 @@ def test(coverage=False, no_functional=False):
 
 
 @manager.command
-def upgrade_db():
-    '''Upgrade the database.'''
-    from flask.ext.migrate import upgrade
-
-    # migrate database to latest revision
-    upgrade()
-
-
-@manager.command
-def init_db():
+def populate_db():
     '''Populate database with initial data.'''
     from app.models import LanguageTest
     # initialize database
