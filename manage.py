@@ -60,11 +60,13 @@ def test(coverage=False, no_functional=False):
 def deploy():
     """Run deployment tasks."""
     from flask.ext.migrate import upgrade
+    from app.models import LanguageTest
 
     # migrate database to latest revision
     upgrade()
 
     # initialize database
+    LanguageTest.init(db)
 
 
 if __name__ == '__main__':

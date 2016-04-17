@@ -8,7 +8,7 @@
    Maybe I need to create the form first.
    Now I need to find a software to draw the control flow.
    Using Lucidchart from Chrome app store, I draw the control flow:
-   ![application control flow chart](./app-control-flow-char.svg)
+   ![application control flow chart](./wiki/app-control-flow-char.svg)
 
 3. After I created the flow chart, I think I need to build the database models. So I installed flask-sqlalchemy.
    I just create the LanguageTest model, and GuessGame class to do game logic.
@@ -38,7 +38,11 @@ After the tests, it's documentation and refactor.
 ## Documentation
 
 Roadmap:
-* config module
-* manage module
+[x] config module
+[x] manage module
 
-Use exception instead of return `None` in model functions?
+Use exception instead of returning `None` in model functions?
+
+## Deployment
+
+Deploy the project on heroku and documentation on readthedocs.
