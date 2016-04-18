@@ -46,6 +46,9 @@ Use exception instead of returning `None` in model functions?
 ## Deployment
 
 [x] Deploy the project on heroku
-[ ] Deploy documentation on readthedocs.
+[x] Deploy documentation on readthedocs.
 
 ## Refactor
+
+[ ] code repetition
+[ ] about page
