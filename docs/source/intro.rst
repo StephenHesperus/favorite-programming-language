@@ -20,17 +20,20 @@ Project Structure
 This game is implemented using `Flask <http://flask.pocoo.org>`_. And this is
 the structure of the project::
 
+
    favproglang/
-   ├── app
+   ├── app/
    │   ├── __init__.py
-   │   ├── main
+   │   ├── main/
    │   │   ├── errors.py
    │   │   ├── forms.py
    │   │   ├── __init__.py
    │   │   └── views.py
    │   ├── models.py
-   │   ├── static
-   │   └── templates
+   │   ├── static/
+   │   │   └── css/
+   │   │       └── base.css
+   │   └── templates/
    │       ├── 404.html
    │       ├── 500.html
    │       ├── base.html
@@ -41,34 +44,44 @@ the structure of the project::
    │       └── question.html
    ├── config.py
    ├── data-dev.sqlite
-   ├── data-test.sqlite
-   ├── docs
+   ├── docs/
    │   ├── make.bat
    │   ├── Makefile
-   │   └── source
+   │   └── source/
    │       ├── apidoc.rst
    │       ├── conf.py
    │       ├── index.rst
    │       ├── intro.rst
    │       ├── license.rst
-   │       ├── _static
-   │       └── _templates
+   │       ├── _static/
+   │       └── _templates/
+   ├── heroku/
+   │   ├── Procfile
+   │   ├── requirements.txt -> ../requirements/heroku.txt
+   │   └── run.py
    ├── LICENSE.mit
-   ├── manage.py
-   ├── migrations
+   ├── manage.py*
+   ├── migrations/
    │   ├── alembic.ini
-   │   ├── env.py
-   │   ├── README
-   │   ├── script.py.mako
-   │   └── versions
+   │   ├── env.py*
+   │   ├── README*
+   │   ├── script.py.mako*
+   │   └── versions/
+   │       └── c05c4e65edac_.py
    ├── NOTE.md
+   ├── Procfile -> heroku/Procfile
    ├── README.md
-   ├── requirements
+   ├── requirements/
+   │   ├── common.in
    │   ├── dev.in
    │   ├── dev.txt
-   │   ├── prod.in
-   │   └── prod.txt
-   ├── tests
+   │   ├── docs.in
+   │   ├── docs.txt
+   │   ├── heroku.in
+   │   └── heroku.txt
+   ├── requirements.txt -> heroku/requirements.txt
+   ├── runtime.txt
+   ├── tests/
    │   ├── functional_tests.py
    │   ├── __init__.py
    │   ├── test_basics.py
@@ -76,10 +89,11 @@ the structure of the project::
    │   ├── test_forms.py
    │   ├── test_models.py
    │   └── test_views.py
-   └── wiki
+   └── wiki/
        ├── app-flow-chart.svg
        ├── test-progress-app-flow-chart.svg
        └── unit-testing-progress-app-flow-chart.svg
+
 
 Project Explained
 ^^^^^^^^^^^^^^^^^

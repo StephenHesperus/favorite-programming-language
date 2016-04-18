@@ -45,4 +45,7 @@ Use exception instead of returning `None` in model functions?
 
 ## Deployment
 
-Deploy the project on heroku and documentation on readthedocs.
+[x] Deploy the project on heroku
+[ ] Deploy documentation on readthedocs.
+
+## Refactor
