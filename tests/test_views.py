@@ -2,6 +2,7 @@ import unittest
 
 from flask import url_for
 from flask import render_template
+from flask import current_app
 
 from app import db
 from app import create_app
@@ -10,6 +11,7 @@ from app.models import get_question
 from app.main.forms import QuestionForm
 from app.main.forms import GuessResultForm
 from app.main.forms import NewLanguageForm
+from app.main.views import id_in_session_required
 
 
 class ViewTestCaseBase(unittest.TestCase):
@@ -28,6 +30,27 @@ class ViewTestCaseBase(unittest.TestCase):
         db.session.remove()
         db.drop_all()
         self.ctx.pop()
+
+
+class ViewUtilTestCase(ViewTestCaseBase):
+
+    def test_id_in_session_required_decorator(self):
+
+        @current_app.route('/test_id_in_session_required')
+        @id_in_session_required
+        def test_id_in_session_required():
+            return 'SUCCESS', 200
+
+        client = self.client
+        resp = client.get('/test_id_in_session_required', follow_redirects=True)
+        self.assertEqual(render_template('index.html').encode(), resp.data,
+            'No id set in session redirects to index page. %s' % resp.data)
+
+        with client.session_transaction() as sess:
+            sess['question_id'] = 1
+        resp = client.get('/test_id_in_session_required', follow_redirects=True)
+        self.assertEqual(b'SUCCESS', resp.data)
+        self.assertEqual(200, resp.status_code)
 
 
 class IndexViewTestCase(ViewTestCaseBase):

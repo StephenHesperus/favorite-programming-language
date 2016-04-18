@@ -27,6 +27,11 @@ app.main
 
 .. automodule:: app.main
 
+app.main.view
+-------------
+
+.. automodule:: app.main.views
+
 app.main.errors
 ---------------
 

@@ -1,3 +1,5 @@
+from functools import wraps
+
 from flask import session
 from flask import render_template
 from flask import redirect
@@ -17,16 +19,33 @@ from ..models import check_answer
 from ..models import LanguageTest
 
 
+def id_in_session_required(f):
+    '''
+    View decorator for main blueprint: make sure ``id`` is set in ``session``,
+    otherwise return to home page :http:get:`/`.
+    '''
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        id_ = session.get('question_id')
+        if id_ is None:
+            return redirect(url_for('main.index'))
+        return f(*args, **kwargs)
+    return decorated_function
+
+
 @main.route('/')
 def index():
     '''
-    Home Page.
+    .. http:get:: /question
+
+       Home Page.
     '''
     session['question_id'] = 1
     return render_template('index.html')
 
 
 @main.route('/question', methods=['GET', 'POST'])
+@id_in_session_required
 def question():
     '''
     .. http:get:: /question
@@ -48,9 +67,6 @@ def question():
                       redirect to :http:get:`/guess`
     '''
     id_ = session.get('question_id')
-    if id_ is None:
-        return redirect(url_for('.index'))
-
     question = get_question(id_)
     if question is None:
         return redirect(url_for('.new_language'))
@@ -67,6 +83,7 @@ def question():
 
 
 @main.route('/guess', methods=['GET', 'POST'])
+@id_in_session_required
 def guess():
     '''
     .. http:get:: /guess
@@ -88,9 +105,6 @@ def guess():
                       redirect to the next question :http:get:`/question`
     '''
     id_ = session.get('question_id')
-    if id_ is None:
-        return redirect(url_for('.index'))
-
     lang = get_language(id_)
     form = GuessResultForm()
     if form.validate_on_submit():
@@ -107,6 +121,7 @@ def guess():
 
 
 @main.route('/new_language', methods=['GET', 'POST'])
+@id_in_session_required
 def new_language():
     '''
     .. http:get:: /new_language
@@ -127,10 +142,6 @@ def new_language():
                     when the language test is added,
                       finish the game, redirect to :http:get:`/`
     '''
-    id_ = session.get('question_id')
-    if id_ is None:
-        return redirect(url_for('.index'))
-
     form = NewLanguageForm()
     if form.validate_on_submit():
         question = form.question.data
