@@ -1,13 +1,80 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width">
-    <title>Guess Your Favorite Programming Language</title>
-  </head>
-  <body>
-    <h1>Guess Your Favorite Programming Language</h1>
-    {% block page_content %}
-    {% endblock page_content %}
-  </body>
-</html>
+{% extends "bootstrap/base.html" %}
+
+{% block title %}Guess Your Favorite Programming Language{% endblock title %}
+
+{% block head %}
+  {{ super() }}
+  <link rel="stylesheet" type="text/css"
+        href="//fonts.googleapis.com/css?family=Bree+Serif">
+  <link rel="stylesheet" type="text/css"
+        href="//fonts.googleapis.com/css?family=Montserrat">
+  <link rel="stylesheet" type="text/css"
+        href="https://cdnjs.cloudflare.com/ajax/libs/material-design-iconic-font/2.2.0/css/material-design-iconic-font.min.css">
+  <link rel="stylesheet" type="text/css" media="screen"
+        href="{{ url_for('static', filename='css/base.css') }}">
+{% endblock head %}
+
+{% block content %}
+<div class="page-container">
+  <div class="toolbar">
+    {% block toolbar %}
+
+    {% endblock toolbar %}
+  </div>
+
+  {% block page_content %}
+
+  {% endblock page_content %}
+
+  <div class="background">
+    <div class="langs">
+    {% for lang in ['ABC', 'ActionScript', 'BASIC', 'C', 'C++', 'Go',
+                    'Haskell', 'Ruby', 'Java', 'JavaScript', 'Lua', 'MATLAB',
+                    'Objective-C', 'Perl', 'PHP', 'Python', 'Q', 'Scala',
+                    'Scheme'] %}
+      <p>{{ lang }}</p>
+    {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock content %}
+
+{% block scripts %}
+{{ super() }}
+<script type="text/javascript">
+$(document).ready(function() {
+  var bg = $('.background');
+  var originalLangs = $('.background p');
+  var bgLangHeight = originalLangs.height();
+
+  $(window).resize(function() {
+    var currentWidth = $(this).width();
+    var availableRows = Math.floor((currentWidth - 4*2) / bgLangHeight);
+
+    bg.height(currentWidth);
+    // show langs according to avaliable screen width
+    // this algorithm doesn't gurantee the list will be the same every time,
+    // but it does popluate the list filling the available space.
+    bg.each(function() {
+        var langs = $(this).find('p');
+        if (availableRows > langs.length) {
+          langs.show();
+          var add = availableRows - langs.length;
+          var langsContainer = $(this).find('.langs');
+          // may need to copy the whole list
+          for (var i = 0; i < add / originalLangs; i++) {
+            originalLangs.clone().appendTo(langsContainer);
+          }
+          originalLangs.filter(':lt(' + add +')').clone()
+            .appendTo(langsContainer);
+        } else {
+          langs.show();
+          langs.filter(':gt(' + (availableRows-1) + ')').hide();
+        }
+    });
+  });
+
+  $(window).resize();
+});
+</script>
+{% endblock scripts %}

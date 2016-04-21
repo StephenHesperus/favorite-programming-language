@@ -1,19 +1,96 @@
 {% extends "base.html" %}
 
+{% block toolbar %}
+<a href="{{ url_for('.index') }}" class="tool-button-container">
+  <i class="tool-button zmdi zmdi-chevron-left zmdi-hc-fw"></i>
+  Quit Game
+</a>
+{% endblock toolbar %}
+
 {% block page_content %}
-<h2>Sorry, I don't know your favorite language. You can add it here so I can learn it .</h2>
+<div id="new-language">
+  <h4>Sorry, I don't know what your favorite programming language is. Tell me so that I can learn.</h4>
 
-<h2>Add Your Favorite Language</h2>
-<form method="POST">
-  {{ form.hidden_tag() }}
-  <p>{{ form.language.label }} {{ form.language }}</p>
-  <p>{{ form.question.label }} {{ form.question }}</p>
-  <p>{{ form.answer }}</p>
-  <p>{{ form.submit }}</p>
-</form>
-
-<p>Or, you can <a href="{{ url_for('.index') }}">start the game again.</a></p>
+  <form method="POST">
+    {{ form.hidden_tag() }}
+    <div class="hidden">
+      {{ form.language }}
+      {{ form.question }}
+      {{ form.answer }}
+      {{ form.submit }}
+    </div>
+  </form>
+  <div class="form">
+    <input type="text" class="language"
+           placeholder="Your Favorite Programming Language"/>
+    {% if form.language.errors %}
+      <ul class="errors">
+      {% for error in form.language.errors %}
+        <li>{{ error }}</li>
+      {% endfor %}
+      </ul>
+    {% endif %}
+    <textarea class="question" value=""
+              placeholder="What makes it different?"></textarea>
+    {% if form.question.errors %}
+      <ul class="errors">
+      {% for error in form.question.errors %}
+        <li>{{ error }}</li>
+      {% endfor %}
+      </ul>
+    {% endif %}
+    <p class="answer-label answer">Answer to the question
+      <label>
+        <input type="radio" name="dummy" class="answer yes"/>
+        <i class="zmdi zmdi-dot-circle zmdi-hc-fw"></i>
+        <i class="zmdi zmdi-circle-o zmdi-hc-fw"></i>
+        <span>Yes</span>
+      </label>
+      <label>
+        <input type="radio" name="dummy" class="answer no"/>
+        <i class="zmdi zmdi-dot-circle zmdi-hc-fw"></i>
+        <i class="zmdi zmdi-circle-o zmdi-hc-fw"></i>
+        <span>No</span>
+      </label>
+    </p>
+    <div>
+      <a id="teachme" class="button">teach me</a>
+    </div>
+  </div>
+</div>
 {% endblock page_content %}
+
+{% block scripts %}
+{{ super() }}
+<script type="text/javascript">
+  var answerYes = $('input[name="answer"][value="yes"]');
+  var answerNo = $('input[name="answer"][value="no"]');
+
+  $('input.language').change(function() {
+    $('input[name="language"]').val($(this).val());
+  });
+  $('textarea.question').change(function() {
+    $('input[name="question"]').val($(this).val().replace(/\n/g, ' '));
+  });
+  $('.answer.yes').click(function() {
+    answerYes.prop('checked', true);
+    answerNo.prop('checked', false);
+  });
+  $('.answer.no').click(function() {
+    answerYes.prop('checked', false);
+    answerNo.prop('checked', true);
+  });
+  $('#teachme').click(function() {
+    $('input[type="submit"]').click();
+  });
+
+  $('textarea.question').on('input change', function() {
+    var rows = $(this).val().split('\n').length;
+    $(this).height((rows-1) * 15 + 24);
+    $(this).height($(this).prop('scrollHeight'));
+  });
+</script>
+{% endblock scripts %}
 
 <!--
 vim: filetype=htmljinja syntax=htmldjango

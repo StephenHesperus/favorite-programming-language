@@ -1,21 +1,45 @@
 {% extends "base.html" %}
 
+{% block toolbar %}
+<a href="{{ url_for('.index') }}" class="tool-button-container">
+  <i class="tool-button zmdi zmdi-chevron-left zmdi-hc-fw"></i>
+  Quit Game
+</a>
+{% endblock toolbar %}
+
 {% block page_content %}
-<h2>{{ question }}</h2>
+<div id="question">
+  <h2>{{ question }}</h2>
 
-{% from "_formhelpers.html" import render_field %}
-<form method="POST">
-  {{ form.hidden_tag() }}
+  <form method="POST">
+    {{ form.hidden_tag() }}
+    <div class="hidden">
+      {{ form.answer }}
+      {{ form.submit }}
+    </div>
+  </form>
 
-  <dl>
-    {{ render_field(form.answer) }}
-  </dl>
-  {{ form.submit }}
-</form>
-
-<p><a href="{{ url_for('.index') }}">Start game again.</a></p>
+  <div class="answers">
+    <div class="answer"><a class="button yes">Yes</a></div>
+    <div class="answer"><a class="button no">No</a></div>
+  </div>
+</div>
 {% endblock page_content %}
 
+{% block scripts %}
+{{ super() }}
+<script type="text/javascript">
+  $('.answer .yes').click(function() {
+    $('input[name="answer"]:first').click();
+    $('input[type="submit"]').click();
+  });
+  $('.answer .no').click(function() {
+    $('input[name="answer"]:last').click();
+    $('input[type="submit"]').click();
+  });
+</script>
+{% endblock scripts %}
+
 <!--
-vim: filetype=htmljinja syntax=htmldjango
+vim: filetype=htmljinja syntax=htmldjango ts=2 sw=2 expandtab
 -->
