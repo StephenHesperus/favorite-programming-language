@@ -13,12 +13,14 @@ click==6.6                # via pip-tools
 coverage==4.0.3
 decorator==4.0.9          # via ipython, traitlets
 docutils==0.12            # via sphinx
+dominate==2.2.0           # via flask-bootstrap
 first==2.0.1              # via pip-tools
+Flask-Bootstrap==3.3.5.7
 Flask-Migrate==1.8.0
 Flask-Script==2.0.5       # via flask-migrate
 Flask-SQLAlchemy==2.1     # via flask-migrate
 Flask-WTF==0.12
-Flask==0.10.1             # via flask-migrate, flask-script, flask-sqlalchemy, flask-wtf
+Flask==0.10.1             # via flask-bootstrap, flask-migrate, flask-script, flask-sqlalchemy, flask-wtf
 gunicorn==19.4.5
 imagesize==0.7.0          # via sphinx
 ipython-genutils==0.1.0   # via traitlets
@@ -50,6 +52,7 @@ sphinxcontrib-httpdomain==1.4.0
 SQLAlchemy==1.0.12        # via alembic, flask-sqlalchemy
 tornado==4.3              # via livereload, sphinx-autobuild
 traitlets==4.2.1          # via ipython
+visitor==0.1.2            # via flask-bootstrap
 watchdog==0.8.3           # via sphinx-autobuild
 Werkzeug==0.11.8          # via flask, flask-wtf
 WTForms==2.1              # via flask-wtf

@@ -17,11 +17,34 @@ class Config(object):
         """Subclass overrides this method to initialize the app instance."""
         pass
 
+    @staticmethod
+    def post_init_app(app):
+        """Subclass overrides this method to change settings after app
+        initialization."""
+        pass
+
 
 class DevelopmentConfig(Config):
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL') or \
         'sqlite:///' + os.path.join(basedir, 'data-dev.sqlite')
+
+    @staticmethod
+    def post_init_app(app):
+        from flask.ext.bootstrap import WebCDN
+        # change flask-bootstrap cdns
+        # from flask-bootstrap source code Bootstrap.init_app()
+        bootstrapcdn = WebCDN('//libs.useso.com/js/bootstrap/3.2.0/')
+        jquery = WebCDN('//libs.useso.com/js/jquery/2.1.1/')
+        html5shiv = WebCDN('//libs.useso.com/js/html5shiv/3.7/')
+        respondjs = WebCDN('//libs.useso.com/js/respond.js/1.4.2/')
+        cdns = {
+            'bootstrap': bootstrapcdn,
+            'jquery': jquery,
+            'html5shiv': html5shiv,
+            'respond.js': respondjs,
+        }
+        app.extensions['bootstrap']['cdns'].update(cdns)
 
 
 class TestingConfig(Config):
