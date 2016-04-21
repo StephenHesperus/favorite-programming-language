@@ -87,7 +87,7 @@ a.button {
   position: absolute;
   width: 100%;
   height: 100%;
-  padding: 0px;
+  padding: 16px;
   padding-bottom: 8px;
   background: linear-gradient(to bottom, #b2dfdb, #e0f2f1);
 }
@@ -120,6 +120,7 @@ a.button {
 
 .page-container #home {
   text-align: center;
+  margin: 0 -16px;
 }
 #home .start {
   margin-top: 48px;
