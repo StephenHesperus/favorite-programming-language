@@ -62,10 +62,10 @@ $(document).ready(function() {
           var add = availableRows - langs.length;
           var langsContainer = $(this).find('.langs');
           // may need to copy the whole list
-          for (var i = 0; i < add / originalLangs; i++) {
+          for (var i = 1; i < add/originalLangs.length; i++) {
             originalLangs.clone().appendTo(langsContainer);
           }
-          originalLangs.filter(':lt(' + add +')').clone()
+          originalLangs.filter(':lt(' + add%originalLangs.length +')').clone()
             .appendTo(langsContainer);
         } else {
           langs.show();

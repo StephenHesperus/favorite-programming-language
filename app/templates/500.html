@@ -1,7 +1,12 @@
 {% extends "base.html" %}
 
+{% block toolbar %}
+<a href="{{ url_for('main.index') }}" class="tool-button-container">
+  <i class="tool-button zmdi zmdi-chevron-left zmdi-hc-fw"></i>
+  Home
+</a>
+{% endblock toolbar %}
+
 {% block page_content %}
 <h2>Internal Server Error</h2>
-
-<p>Go to <a href="{{ url_for('main.index') }}">home page</a>.</p>
 {% endblock page_content %}

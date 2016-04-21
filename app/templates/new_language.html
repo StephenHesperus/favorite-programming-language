@@ -30,8 +30,11 @@
       {% endfor %}
       </ul>
     {% endif %}
-    <textarea class="question" value=""
-              placeholder="What makes it different?"></textarea>
+    <div class="ta">
+      <textarea class="question"
+                placeholder="What makes it different?"></textarea>
+      <pre class="tamodel"></pre>
+    </div>
     {% if form.question.errors %}
       <ul class="errors">
       {% for error in form.question.errors %}
@@ -85,9 +88,15 @@
   });
 
   $('textarea.question').on('input change', function() {
-    var rows = $(this).val().split('\n').length;
-    $(this).height((rows-1) * 15 + 24);
-    $(this).height($(this).prop('scrollHeight'));
+    var model = $(this).next('.tamodel');
+    model.css({
+      'font-family': $(this).css('font-family'),
+      'font-size': $(this).css('font-size'),
+      'width': $(this).width(),
+    });
+    model.text($(this).val());
+    console.log(model, model.height());
+    $(this).height(model.height());
   });
 </script>
 {% endblock scripts %}

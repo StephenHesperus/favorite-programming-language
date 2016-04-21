@@ -5,6 +5,7 @@ body {
 
 h1, h2, h3, h4 {
   font-family: bree serif, sans-serif;
+  font-weight: bold;
 }
 
 .button {
@@ -74,28 +75,6 @@ a.button {
   transform: scale(2);
 }
 
-.control h4 {
-  display: inline-block;
-}
-.control span, .control select {
-  margin-left: 8px;
-}
-.control #current-screen-width {
-  font-weight: bold;
-  font-size: 18px;
-  display: inline-block;
-  min-width: 80px;
-}
-.control #resolutions {
-  border: none;
-  border-bottom: 1px solid #009688;
-}
-.control #resolutions:focus {
-  outline: none;
-  border: none;
-  border-bottom: 2px solid #009688;
-}
-
 .page-container {
   z-index: -2;
   position: absolute;
@@ -106,6 +85,7 @@ a.button {
   background: linear-gradient(to bottom, #b2dfdb, #e0f2f1);
 }
 .page-container .background {
+  opacity: .25;
   z-index: -1;
   font-family: Montserrat;
   font-size: 14px;
@@ -177,12 +157,22 @@ a.button {
   color: #00796b;
   background: transparent;
   border-bottom: 1px solid #009688;
+  padding: 1px;
+}
+#new-language .ta {
+  position: relative;
+}
+#new-language .tamodel {
+  padding: 0;
+  white-space: pre-wrap;
+  position: absolute;
+  opacity: 0;
 }
 #new-language input.language:focus, #new-language textarea.question:focus {
   border: none;
   outline: none;
   border-bottom: 2px solid #009688;
-  margin-bottom: 7px;
+  padding-bottom: 0;
 }
 #new-language input.language::-webkit-input-placeholder, #new-language textarea.question::-webkit-input-placeholder {
   color: #00796b;
@@ -242,4 +232,71 @@ a.button {
   margin-top: 32px;
   text-align: center;
   display: block;
+}
+
+@media (min-width: 768px) {
+  h1 {
+    font-size: 80px;
+  }
+  h2 {
+    font-size: 64px;
+  }
+  h3 {
+    font-size: 48px;
+  }
+  h4 {
+    font-size: 36px;
+  }
+  .button {
+    font-size: 36px;
+    padding: 8px 32px;
+  }
+  .toolbar .tool-button-container {
+    font-size: 24px;
+  }
+  .page-container {
+    padding: 32px;
+    padding-bottom: 16px;
+  }
+  .background p {
+    font-size: 18px;
+  }
+  #home .start {
+    margin-top: 150px;
+  }
+  #guess h2.guess {
+    font-size: 72px;
+    text-shadow: 0 2px 4px #004d40;
+  }
+  #new-language .form {
+    margin: 16px;
+    margin-top: 32px;
+  }
+  #new-language input.language,
+  #new-language textarea.question,
+  #new-language p.answer-label,
+  #new-language span {
+    font-size: 28px;
+  }
+  #new-language input.language,
+  #new-language textarea.question {
+    height: 48px;
+    margin-bottom: 16px;
+    border-bottom: 2px solid #009688;
+    padding: 2px;
+  }
+  #new-language input.language:focus, #new-language textarea.question:focus {
+    border-bottom: 4px solid #009688;
+    padding-bottom: 0;
+  }
+  #new-language textarea.question {
+    min-height: 48px;
+    max-height: 120px;
+  }
+  #new-language .answer i.zmdi {
+    font-size: 48px;
+  }
+  #new-language i.zmdi + span {
+    margin-left: 64px;
+  }
 }
