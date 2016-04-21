@@ -12,6 +12,13 @@ h1, h2, h3, h4 {
   font-family: bree serif, serif;
 }
 
+.errors {
+  font-family: Montserrat, sans-serif;
+  font-size: 11px;
+  color: #004d40;
+  text-shadow: 0 1px 2px #004d40;
+}
+
 h1 {
   font-size: 46px;
   color: #00796b;
@@ -193,6 +200,7 @@ a.button {
 #new-language textarea.question {
   resize: none;
   height: 24px;
+  min-height: 24px;
   max-height: 54px;
 }
 #new-language p.answer-label {
@@ -271,6 +279,9 @@ a.button {
   #new-language .form {
     margin: 16px;
     margin-top: 32px;
+  }
+  #new-language .errors {
+    font-size: 20px;
   }
   #new-language input.language,
   #new-language textarea.question,

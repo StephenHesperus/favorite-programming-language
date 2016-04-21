@@ -21,41 +21,50 @@
     </div>
   </form>
   <div class="form">
-    <input type="text" class="language"
+    <input type="text" class="language" value="{{ form.language.data or '' }}"
            placeholder="Your Favorite Programming Language"/>
     {% if form.language.errors %}
-      <ul class="errors">
+      <ul class="errors zmdi-hc-ul">
       {% for error in form.language.errors %}
-        <li>{{ error }}</li>
+        <li><i class="zmdi zmdi-hc-li zmdi-alert-triangle"></i>{{ error }}</li>
       {% endfor %}
       </ul>
     {% endif %}
     <div class="ta">
       <textarea class="question"
-                placeholder="What makes it different?"></textarea>
+                placeholder="What makes it different?">{{ form.question.data or '' }}</textarea>
       <pre class="tamodel"></pre>
     </div>
     {% if form.question.errors %}
-      <ul class="errors">
+      <ul class="errors zmdi-hc-ul">
       {% for error in form.question.errors %}
-        <li>{{ error }}</li>
+        <li><i class="zmdi zmdi-hc-li zmdi-alert-triangle"></i>{{ error }}</li>
       {% endfor %}
       </ul>
     {% endif %}
     <p class="answer-label answer">Answer to the question
       <label>
-        <input type="radio" name="dummy" class="answer yes"/>
+        <input type="radio" name="dummy" class="answer yes"
+               {% if form.answer.data == 'yes' %}checked="checked"{% endif %} />
         <i class="zmdi zmdi-dot-circle zmdi-hc-fw"></i>
         <i class="zmdi zmdi-circle-o zmdi-hc-fw"></i>
         <span>Yes</span>
       </label>
       <label>
-        <input type="radio" name="dummy" class="answer no"/>
+        <input type="radio" name="dummy" class="answer no"
+               {% if form.answer.data == 'no' %}checked="checked"{% endif %} />
         <i class="zmdi zmdi-dot-circle zmdi-hc-fw"></i>
         <i class="zmdi zmdi-circle-o zmdi-hc-fw"></i>
         <span>No</span>
       </label>
     </p>
+    {% if form.answer.errors %}
+      <ul class="errors zmdi-hc-ul">
+      {% for error in form.answer.errors %}
+        <li><i class="zmdi zmdi-hc-li zmdi-alert-triangle"></i>{{ error }}</li>
+      {% endfor %}
+      </ul>
+    {% endif %}
     <div>
       <a id="teachme" class="button">teach me</a>
     </div>
